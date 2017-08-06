@@ -1,8 +1,6 @@
 <%
 
 define('request', function(require, exports, module) {
-	var util = require('util');
-	
 	module.exports = function request(options, done) {
 		if ('string' === typeof options) {
 			options = {url: options};
@@ -65,7 +63,7 @@ define('request', function(require, exports, module) {
 			
 			try {
 				data = http.responseText;
-				if (options.json || headers['content-type'] === 'application/json') {
+				if (options.json || /^application\/json/.test(headers['content-type'])) {
 					data = JSON.parse(http.responseText);
 				} else if (/^text\//.test(headers['content-type'])) {
 					data = http.responseText;
@@ -83,8 +81,7 @@ define('request', function(require, exports, module) {
 			};
 		};
 		
-		util.defer(done, error, response, data);
-		
+		done(error, response, data);
 		return this;
 	};
 	
